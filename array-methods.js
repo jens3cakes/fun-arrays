@@ -5,24 +5,35 @@ var dataset = require('./dataset.json');
   greater than 100000
   assign the resulting new array to `hundredThousandairs`
 */
-var hundredThousandairs = null;
+var hundredThousandairs = dataset.bankBalances.filter(function (element) {
+  return parseInt(element.amount) >= 100000;
+});
+//console.log(hundredThousandairs);
 
-// set sumOfBankBalances to be the sum of all value held at `amount` for each bank object
+/* set sumOfBankBalances to be the sum of all value held at `amount` for each bank object*/
+
 var sumOfBankBalances = null;
+sumOfBankBalances = dataset.bankBalances.reduce(function (total, element) {
+  return Math.floor(parseInt(total) + parseInt(element.amount));
+}, 0);
 
-/*
-  from each of the following states:
-    Wisconsin
-    Illinois
-    Wyoming
-    Ohio
-    Georgia
-    Delaware
-  take each `amount` and add 18.9% interest to it rounded to the nearest dollar 
-  and then sum it all up into one value saved to `sumOfInterests`
- */
-var sumOfInterests = null;
-
+/*from each of the following states:
+  Wisconsin
+  Illinois
+  Wyoming
+  Ohio
+  Georgia
+  Delaware
+take each `amount` and add 18.9% interest to it rounded to the nearest dollar 
+and then sum it all up into one value saved to `sumOfInterests`
+*/
+var sumOfInterests = dataset.bankBalances.filter(function (obj) {
+  //console.log(obj)
+  var stateStats = ["WI", "IL", "WY", "OH", "GA", 'DE']
+  return stateStats.indexOf(obj.state) !== -1
+}).reduce(function (total, currentValue) {
+  return Math.round(parseInt(total) + parseInt(currentValue.amount) * .189)
+}, 0);
 /*
   aggregate the sum of bankBalance amounts
   grouped by state
@@ -39,8 +50,16 @@ var sumOfInterests = null;
     round this number to the nearest dollar before moving on.
   )
  */
-var stateSums = null;
-
+var stateSums = dataset.bankBalances.reduce(function (previousState, currentState) {
+  let key = currentState.state
+  let amount = currentState.amount
+  if (previousState[key]) {
+    previousState[key] += parseInt(currentState.amount)
+  } else {
+    previousState[key] = parseInt(currentState.amount)
+  }
+  return previousState;
+}, {})
 /*
   for all states *NOT* in the following states:
     Wisconsin
@@ -59,7 +78,16 @@ var stateSums = null;
   )
  */
 var sumOfHighInterests = null;
+var stateVar = Object.entries(stateSums)
+console.log(stateVar)
+var interest = dataset.bankBalances.filter(function (obj) {
+  //console.log(obj)
+  var stateStats = ["WI", "IL", "WY", "OH", "GA", 'DE']
+  
+ },{})
 
+
+console.log(interest)
 /*
   set `lowerSumStates` to be an array of two letter state
   abbreviations of each state where the sum of amounts
@@ -108,13 +136,13 @@ var anyStatesInHigherStateSum = null;
 
 
 module.exports = {
-  hundredThousandairs : hundredThousandairs,
-  sumOfBankBalances : sumOfBankBalances,
-  sumOfInterests : sumOfInterests,
-  sumOfHighInterests : sumOfHighInterests,
-  stateSums : stateSums,
-  lowerSumStates : lowerSumStates,
-  higherStateSums : higherStateSums,
-  areStatesInHigherStateSum : areStatesInHigherStateSum,
-  anyStatesInHigherStateSum : anyStatesInHigherStateSum
+  hundredThousandairs: hundredThousandairs,
+  sumOfBankBalances: sumOfBankBalances,
+  sumOfInterests: sumOfInterests,
+  sumOfHighInterests: sumOfHighInterests,
+  stateSums: stateSums,
+  lowerSumStates: lowerSumStates,
+  higherStateSums: higherStateSums,
+  areStatesInHigherStateSum: areStatesInHigherStateSum,
+  anyStatesInHigherStateSum: anyStatesInHigherStateSum
 };
